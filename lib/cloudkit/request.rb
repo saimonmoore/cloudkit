@@ -17,7 +17,10 @@ module CloudKit
     # Return the JSON content from the request body
     def json
       self.body.rewind
-      self.body.read
+      raw = self.body.read
+      # extract the json from the body to avoid tunneled _method param from being parsed as json
+      json_data = (matches = raw.match(/(\{.*\})/)) ? matches[1] : raw
+      json_data
     end
 
     # Return a CloudKit::URI instance representing the rack request's path info.
